@@ -13,7 +13,7 @@ var sqlMutex *sync.Mutex = &sync.Mutex{}
 
 func Connect() {
 	var err error
-	SQLite, err = sql.Open("sqlite3", "lm2.db")
+	SQLite, err = sql.Open("sqlite3", ":memory:")
 
 	if err != nil {
 		globals.Logger.Critical(err.Error())
