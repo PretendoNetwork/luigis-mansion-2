@@ -3,35 +3,39 @@ package nex
 import (
 	"fmt"
 	"os"
+	"strconv"
 
+	"github.com/PretendoNetwork/nex-go"
 	"github.com/PretendoNetwork/luigis-mansion-2/globals"
-	nex "github.com/PretendoNetwork/nex-go"
 )
 
 var serverBuildString string
 
 func StartAuthenticationServer() {
-	globals.AuthenticationServer = nex.NewServer()
-	globals.AuthenticationServer.SetPRUDPVersion(1)
-	globals.AuthenticationServer.SetPRUDPProtocolMinorVersion(0)
-	globals.AuthenticationServer.SetDefaultNEXVersion(&nex.NEXVersion{
-		Major: 3,
-		Minor: 1,
-		Patch: 0,
-	})
-	globals.AuthenticationServer.SetKerberosPassword(globals.KerberosPassword)
-	globals.AuthenticationServer.SetAccessKey("3861a9f8")
+	globals.AuthenticationServer = nex.NewPRUDPServer()
 
-	globals.AuthenticationServer.On("Data", func(packet *nex.PacketV1) {
-		request := packet.RMCRequest()
+	globals.AuthenticationEndpoint = nex.NewPRUDPEndPoint(1)
+	globals.AuthenticationEndpoint.ServerAccount = globals.AuthenticationServerAccount
+	globals.AuthenticationEndpoint.AccountDetailsByPID = globals.AccountDetailsByPID
+	globals.AuthenticationEndpoint.AccountDetailsByUsername = globals.AccountDetailsByUsername
+	globals.AuthenticationServer.BindPRUDPEndPoint(globals.AuthenticationEndpoint)
 
-		fmt.Println("==Luigi's Mansion: Dark Moon - Auth==")
-		fmt.Printf("Protocol ID: %d\n", request.ProtocolID())
-		fmt.Printf("Method ID: %d\n", request.MethodID())
-		fmt.Println("===============")
+	globals.AuthenticationServer.LibraryVersions.SetDefault(nex.NewLibraryVersion(3, 1, 0))
+	globals.AuthenticationServer.PRUDPV1Settings.LegacyConnectionSignature = true
+	globals.AuthenticationServer.AccessKey = "3861a9f8"
+
+	globals.AuthenticationEndpoint.OnData(func(packet nex.PacketInterface) {
+		request := packet.RMCMessage()
+
+		fmt.Println("=== Luigi's Mansion 2 - Auth ===")
+		fmt.Printf("Protocol ID: %#v\n", request.ProtocolID)
+		fmt.Printf("Method ID: %#v\n", request.MethodID)
+		fmt.Println("================================")
 	})
 
 	registerCommonAuthenticationServerProtocols()
 
-	globals.AuthenticationServer.Listen(fmt.Sprintf(":%s", os.Getenv("PN_LUIGISMANSION2_AUTHENTICATION_SERVER_PORT")))
+	port, _ := strconv.Atoi(os.Getenv("PN_LM2_AUTHENTICATION_SERVER_PORT"))
+
+	globals.AuthenticationServer.Listen(port)
 }
