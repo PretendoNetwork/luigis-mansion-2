@@ -3,7 +3,7 @@ package globals
 import (
 	pb_account "github.com/PretendoNetwork/grpc-go/account"
 	pb_friends "github.com/PretendoNetwork/grpc-go/friends"
-	"github.com/PretendoNetwork/nex-go"
+	"github.com/PretendoNetwork/nex-go/v2"
 	"github.com/PretendoNetwork/plogger-go"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/metadata"

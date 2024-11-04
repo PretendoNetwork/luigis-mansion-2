@@ -5,7 +5,7 @@ import (
 	"os"
 	"strconv"
 
-	nex "github.com/PretendoNetwork/nex-go"
+	nex "github.com/PretendoNetwork/nex-go/v2"
 	"github.com/PretendoNetwork/luigis-mansion-2/globals"
 )
 
@@ -30,6 +30,10 @@ func StartSecureServer() {
 		fmt.Printf("Protocol ID: %#v\n", request.ProtocolID)
 		fmt.Printf("Method ID: %#v\n", request.MethodID)
 		fmt.Println("==================================")
+	})
+
+	globals.SecureEndpoint.OnError(func(err *nex.Error) {
+		globals.Logger.Error(err.Error())
 	})
 
 	registerCommonSecureServerProtocols()

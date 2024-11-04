@@ -71,6 +71,7 @@ All configuration options are handled via environment variables
 
 | Name                                | Description                                                                                                            | Required                                      |
 |-------------------------------------|------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------|
+| `PN_LM2_POSTGRES_URI`               | Fully qualified URI to your Postgres server (Example `postgres://username:password@localhost/lm2?sslmode=disable`)     | Yes                                           |
 | `PN_LM2_KERBEROS_PASSWORD`          | Password used as part of the internal server data in Kerberos tickets                                                  | No (Default password `password` will be used) |
 | `PN_LM2_AUTHENTICATION_SERVER_PORT` | Port for the authentication server                                                                                     | Yes                                           |
 | `PN_LM2_SECURE_SERVER_HOST`         | Host name for the secure server (should point to the same address as the authentication server)                        | Yes                                           |

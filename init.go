@@ -6,16 +6,17 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/PretendoNetwork/nex-go"
-	"github.com/PretendoNetwork/nex-go/types"
 	pb_account "github.com/PretendoNetwork/grpc-go/account"
 	pb_friends "github.com/PretendoNetwork/grpc-go/friends"
+	"github.com/PretendoNetwork/nex-go/v2"
+	"github.com/PretendoNetwork/nex-go/v2/types"
 	"github.com/PretendoNetwork/plogger-go"
 	"github.com/joho/godotenv"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/metadata"
 
+	"github.com/PretendoNetwork/luigis-mansion-2/database"
 	"github.com/PretendoNetwork/luigis-mansion-2/globals"
 )
 
@@ -29,6 +30,7 @@ func init() {
 		globals.Logger.Warning("Error loading .env file")
 	}
 
+	postgresURI := os.Getenv("PN_LM2_POSTGRES_URI")
 	kerberosPassword := os.Getenv("PN_LM2_KERBEROS_PASSWORD")
 	authenticationServerPort := os.Getenv("PN_LM2_AUTHENTICATION_SERVER_PORT")
 	secureServerHost := os.Getenv("PN_LM2_SECURE_SERVER_HOST")
@@ -39,6 +41,11 @@ func init() {
 	friendsGRPCHost := os.Getenv("PN_LM2_FRIENDS_GRPC_HOST")
 	friendsGRPCPort := os.Getenv("PN_LM2_FRIENDS_GRPC_PORT")
 	friendsGRPCAPIKey := os.Getenv("PN_LM2_FRIENDS_GRPC_API_KEY")
+
+	if strings.TrimSpace(postgresURI) == "" {
+		globals.Logger.Error("PN_LM2_POSTGRES_URI environment variable not set")
+		os.Exit(0)
+	}
 
 	if strings.TrimSpace(kerberosPassword) == "" {
 		globals.Logger.Warningf("PN_LM2_KERBEROS_PASSWORD environment variable not set. Using default password: %q", globals.KerberosPassword)
@@ -145,4 +152,6 @@ func init() {
 	globals.GRPCFriendsCommonMetadata = metadata.Pairs(
 		"X-API-Key", friendsGRPCAPIKey,
 	)
+
+	database.ConnectPostgres()
 }
