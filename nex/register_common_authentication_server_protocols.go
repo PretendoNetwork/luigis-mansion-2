@@ -5,26 +5,30 @@ import (
 	"strconv"
 
 	"github.com/PretendoNetwork/luigis-mansion-2/globals"
-	nex "github.com/PretendoNetwork/nex-go"
-	ticket_granting "github.com/PretendoNetwork/nex-protocols-common-go/ticket-granting"
+	"github.com/PretendoNetwork/nex-go/v2/constants"
+	"github.com/PretendoNetwork/nex-go/v2/types"
+	common_ticket_granting "github.com/PretendoNetwork/nex-protocols-common-go/v2/ticket-granting"
+	ticket_granting "github.com/PretendoNetwork/nex-protocols-go/v2/ticket-granting"
 )
 
 func registerCommonAuthenticationServerProtocols() {
-	ticketGrantingProtocol := ticket_granting.NewCommonTicketGrantingProtocol(globals.AuthenticationServer)
+	ticketGrantingProtocol := ticket_granting.NewProtocol()
+	globals.AuthenticationEndpoint.RegisterServiceProtocol(ticketGrantingProtocol)
+	commonTicketGrantingProtocol := common_ticket_granting.NewCommonProtocol(ticketGrantingProtocol)
 
-	secureStationURL := nex.NewStationURL("")
-	secureStationURL.SetScheme("prudps")
-	secureStationURL.SetAddress(os.Getenv("PN_LUIGISMANSION2_SECURE_SERVER_HOST"))
-	port, _ := strconv.ParseUint(os.Getenv("PN_LUIGISMANSION2_SECURE_SERVER_PORT"), 10, 32)
-	secureStationURL.SetPort(uint32(port))
-	secureStationURL.SetCID(1)
-	secureStationURL.SetPID(2)
-	secureStationURL.SetSID(1)
-	secureStationURL.SetStream(10)
-	secureStationURL.SetType(2)
+	port, _ := strconv.Atoi(os.Getenv("PN_LM2_SECURE_SERVER_PORT"))
 
-	ticketGrantingProtocol.SetSecureStationURL(secureStationURL)
-	ticketGrantingProtocol.SetBuildName(serverBuildString)
+	secureStationURL := types.NewStationURL("")
+	secureStationURL.SetURLType(constants.StationURLPRUDPS)
+	secureStationURL.SetAddress(os.Getenv("PN_LM2_SECURE_SERVER_HOST"))
+	secureStationURL.SetPortNumber(uint16(port))
+	secureStationURL.SetConnectionID(1)
+	secureStationURL.SetPrincipalID(types.NewPID(2))
+	secureStationURL.SetStreamID(1)
+	secureStationURL.SetStreamType(constants.StreamTypeRVSecure)
+	secureStationURL.SetType(uint8(constants.StationURLFlagPublic))
 
-	globals.AuthenticationServer.SetPasswordFromPIDFunction(globals.PasswordFromPID)
+	commonTicketGrantingProtocol.SecureStationURL = secureStationURL
+	commonTicketGrantingProtocol.BuildName = types.NewString(serverBuildString)
+	commonTicketGrantingProtocol.SecureServerAccount = globals.SecureServerAccount
 }

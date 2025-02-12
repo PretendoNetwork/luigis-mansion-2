@@ -1,9 +1,6 @@
 # Luigi's Mansion: Dark Moon (Luigi's Mansion 2) replacement server
 Includes both the authentication and secure servers
 
-## Status
-This does not work well at all. Sometimes, a room can be started, but on attempting to fetch the room list, the game crashes.
-
 ## Compiling
 
 ### Setup
@@ -29,8 +26,8 @@ Create a `.env` file with all of the necessary environment variables set. The va
 
 Example:
 ```
-PN_LUIGISMANSION2_POSTGRES_URI=postgres://username:password@localhost/luigismansion2?sslmode=disable
-PN_LUIGISMANSION2_AUTHENTICATION_SERVER_PORT=61001
+PN_LM2_AUTHENTICATION_SERVER_PORT=61001
+PN_LM2_SECURE_SERVER_PORT=61002
 ...
 ```
 
@@ -47,10 +44,10 @@ To compile using Go, `go get` the required modules and then `go build` to your d
 ```bash
 $ go get -u
 $ go mod tidy
-$ go build -o build/luigismansion2
+$ go build -o build/luigis-mansion-2
 ```
 
-The server is now built to `build/luigismansion2`
+The server is now built to `build/luigis-mansion-2`
 
 When compiling with only Go, the authentication servers build string is not automatically set. This should not cause any issues with gameplay, but it means that the server build will not be visible in any packet dumps or logs a title may produce
 
@@ -72,13 +69,15 @@ All configuration options are handled via environment variables
 
 `.env` files are supported
 
-| Name                                    | Description                                                                                                            | Required                                      |
-|-----------------------------------------|------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------|
-| `PN_LUIGISMANSION2_POSTGRES_URI`               | Fully qualified URI to your Postgres server (Example `postgres://username:password@localhost/luigismansion2?sslmode=disable`) | Yes                                           |
-| `PN_LUIGISMANSION2_KERBEROS_PASSWORD`          | Password used as part of the internal server data in Kerberos tickets                                                  | No (Default password `password` will be used) |
-| `PN_LUIGISMANSION2_AUTHENTICATION_SERVER_PORT` | Port for the authentication server                                                                                     | Yes                                           |
-| `PN_LUIGISMANSION2_SECURE_SERVER_HOST`         | Host name for the secure server (should point to the same address as the authentication server)                        | Yes                                           |
-| `PN_LUIGISMANSION2_SECURE_SERVER_PORT`         | Port for the secure server                                                                                             | Yes                                           |
-| `PN_LUIGISMANSION2_ACCOUNT_GRPC_HOST`          | Host name for your account server gRPC service                                                                         | Yes                                           |
-| `PN_LUIGISMANSION2_ACCOUNT_GRPC_PORT`          | Port for your account server gRPC service                                                                              | Yes                                           |
-| `PN_LUIGISMANSION2_ACCOUNT_GRPC_API_KEY`       | API key for your account server gRPC service                                                                           | No (Assumed to be an open gRPC API)           |
+| Name                                | Description                                                                                                        | Required                            |
+|-------------------------------------|--------------------------------------------------------------------------------------------------------------------|-------------------------------------|
+| `PN_LM2_POSTGRES_URI`               | Fully qualified URI to your Postgres server (Example `postgres://username:password@localhost/lm2?sslmode=disable`) | Yes                                 |
+| `PN_LM2_AUTHENTICATION_SERVER_PORT` | Port for the authentication server                                                                                 | Yes                                 |
+| `PN_LM2_SECURE_SERVER_HOST`         | Host name for the secure server (should point to the same address as the authentication server)                    | Yes                                 |
+| `PN_LM2_SECURE_SERVER_PORT`         | Port for the secure server                                                                                         | Yes                                 |
+| `PN_LM2_ACCOUNT_GRPC_HOST`          | Host name for your account server gRPC service                                                                     | Yes                                 |
+| `PN_LM2_ACCOUNT_GRPC_PORT`          | Port for your account server gRPC service                                                                          | Yes                                 |
+| `PN_LM2_ACCOUNT_GRPC_API_KEY`       | API key for your account server gRPC service                                                                       | No (Assumed to be an open gRPC API) |
+| `PN_LM2_FRIENDS_GRPC_HOST`          | Host name for your friends server gRPC service                                                                     | Yes                                 |
+| `PN_LM2_FRIENDS_GRPC_PORT`          | Port for your friends server gRPC service                                                                          | Yes                                 |
+| `PN_LM2_FRIENDS_GRPC_API_KEY`       | API key for your friends server gRPC service                                                                       | No (Assumed to be an open gRPC API) |
